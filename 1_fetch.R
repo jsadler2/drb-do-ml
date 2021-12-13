@@ -1,4 +1,4 @@
-source("1_fetch/src/fetch_harmonized_wqp_data.R")
+source("1_fetch/src/fetch_sb_data.R")
 source("1_fetch/src/get_nwis_sites.R")
 source("1_fetch/src/get_daily_nwis_data.R")
 source("1_fetch/src/get_inst_nwis_data.R")
@@ -42,8 +42,7 @@ p1_targets_list <- list(
   tar_target(
     p1_daily_data_csv,
     write_to_csv(p1_daily_data, outfile="1_fetch/out/daily_do_data.csv"),
-    format = "file"
-  ),
+    format = "file"),
   
   # Subset NWIS sites with sub-daily data
   tar_target(
@@ -87,6 +86,22 @@ p1_targets_list <- list(
     p1_reaches_sf,
     # third item is the .shp file (all are 'dbf', 'prj', 'shp', and 'shx')
     st_read(p1_reaches_shp_unzipped[3])
+    format = "file"),
+
+  # fetch prms met data
+  tar_target(
+    p1_prms_met_data_zip_file,
+    fetch_prms_met_data("1_fetch/out", "sntemp_inputs_outputs_drb.zip"),
+    format = "file"),
+
+  # unzip prms met data
+  tar_target(
+    p1_prms_met_data_csv_file,
+    {
+    unzip(zipfile=p1_prms_met_data_zip_file,exdir = dirname(p1_prms_met_data_zip_file),overwrite=TRUE)
+    file.path(dirname(p1_prms_met_data_zip_file), "sntemp_inputs_outputs_drb.csv")},
+    format = "file"),
+
   )
   
 )
