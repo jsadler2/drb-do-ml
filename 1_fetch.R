@@ -102,6 +102,13 @@ p1_targets_list <- list(
     file.path(dirname(p1_prms_met_data_zip_file), "sntemp_inputs_outputs_drb.csv")},
     format = "file"),
 
+  # prms attributes
+  # [Jeff] I'm including these in the "in" folder because they are unpublished
+  # They are built in the delaware_model_prep pipeline (1_network/out/seg_attr_drb.feather)
+  tar_target(
+    p1_prms_seg_attributes,
+    "1_fetch/in/seg_attr_drb.feather",
+    format = "file")
   )
   
 )
