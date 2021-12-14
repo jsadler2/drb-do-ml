@@ -45,7 +45,7 @@ p2_targets_list <- list(
   
   tar_target(
     p2_sites_w_segs_csv,
-    write_to_csv(p2_sites_w_segs, "2_process/out/site_w_seg_ids.csv")
+    write_to_csv(p2_sites_w_segs, file.path(run_dir, "2_process/out/site_w_seg_ids.csv"))
   ),
   
   tar_target(
@@ -58,7 +58,7 @@ p2_targets_list <- list(
   
   tar_target(
     p2_daily_with_seg_ids_csv,
-    write_to_csv(p2_daily_with_seg_ids, "2_process/out/daily_do_data.csv"),
+    write_to_csv(p2_daily_with_seg_ids, file.path(run_dir, "2_process/out/daily_do_data.csv")),
     format = "file"
   ) 
   

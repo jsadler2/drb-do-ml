@@ -7,11 +7,16 @@ source("1_fetch.R")
 source("2_process.R")
 source("3_visualize.R")
 
-dir.create("1_fetch/out/", showWarnings = FALSE)
-dir.create("2_process/out/", showWarnings = FALSE)
-dir.create("3_visualize/out/", showWarnings = FALSE)
-dir.create("3_visualize/out/daily_timeseries_png/",showWarnings = FALSE)
-dir.create("3_visualize/out/hourly_timeseries_png/",showWarnings = FALSE)
+run_dir <- targets::tar_config_get("store")
+if (run_dir == "_targets"){
+    run_dir <- getwd()
+}
+
+dir.create(file.path(run_dir, "1_fetch/out/"), showWarnings = FALSE)
+dir.create(file.path(run_dir, "2_process/out/"), showWarnings = FALSE)
+dir.create(file.path(run_dir, "3_visualize/out/"), showWarnings = FALSE)
+dir.create(file.path(run_dir, "3_visualize/out/daily_timeseries_png/"),showWarnings = FALSE)
+dir.create(file.path(run_dir, "3_visualize/out/hourly_timeseries_png/"),showWarnings = FALSE)
 
 # Define columns of interest from harmonized WQP data
 wqp_vars_select <- c("MonitoringLocationIdentifier","MonitoringLocationName","LongitudeMeasure","LatitudeMeasure",

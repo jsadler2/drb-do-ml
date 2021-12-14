@@ -15,7 +15,7 @@ p1_targets_list <- list(
   # Load harmonized WQP data product for discrete samples
   tar_target(
     p1_wqp_data,
-    fetch_harmonized_wqp_data("1_fetch/out")),
+    fetch_harmonized_wqp_data(file.path(run_dir, "1_fetch/out"))),
   
   # Identify NWIS sites with DO data 
   tar_target(
@@ -41,7 +41,7 @@ p1_targets_list <- list(
   
   tar_target(
     p1_daily_data_csv,
-    write_to_csv(p1_daily_data, outfile="1_fetch/out/daily_do_data.csv"),
+    write_to_csv(p1_daily_data, outfile=file.path(run_dir, "1_fetch/out/daily_do_data.csv")),
     format = "file"),
   
   # Subset NWIS sites with sub-daily data
@@ -59,7 +59,7 @@ p1_targets_list <- list(
   
   tar_target(
     p1_inst_data_csv,
-    write_to_csv(p1_inst_data, outfile="1_fetch/out/inst_do_data.csv"),
+    write_to_csv(p1_inst_data, outfile=file.path(run_dir, "1_fetch/out/inst_do_data.csv")),
     format = "file"
   ),
   
@@ -77,7 +77,7 @@ p1_targets_list <- list(
   
   tar_target(
     p1_reaches_shp_unzipped,
-    {shapedir = "1_fetch/out/study_stream_reaches"
+    {shapedir = file.path(run_dir, "1_fetch/out/study_stream_reaches")
     unzip(p1_reaches_shp_zip, exdir = shapedir)},
     format = "file"
   ),
@@ -90,7 +90,7 @@ p1_targets_list <- list(
   # fetch prms met data
   tar_target(
     p1_prms_met_data_zip_file,
-    fetch_prms_met_data("1_fetch/out", "sntemp_inputs_outputs_drb.zip"),
+    fetch_prms_met_data(file.path(run_dir, "1_fetch/out"), "sntemp_inputs_outputs_drb.zip"),
     format = "file"),
 
   # unzip prms met data
