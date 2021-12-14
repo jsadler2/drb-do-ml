@@ -85,8 +85,7 @@ p1_targets_list <- list(
   tar_target(
     p1_reaches_sf,
     # third item is the .shp file (all are 'dbf', 'prj', 'shp', and 'shx')
-    st_read(p1_reaches_shp_unzipped[3])
-    format = "file"),
+    st_read(p1_reaches_shp_unzipped[3])),
 
   # fetch prms met data
   tar_target(
@@ -109,7 +108,6 @@ p1_targets_list <- list(
     p1_prms_seg_attributes,
     "1_fetch/in/seg_attr_drb.feather",
     format = "file")
-  )
   
 )
 
