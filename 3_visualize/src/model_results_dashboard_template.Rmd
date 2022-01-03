@@ -1,0 +1,93 @@
+---
+title: "Model results for 0_baseline_LSTM"
+date: "`r Sys.Date()`"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: columns
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE, echo=FALSE}
+library(flexdashboard)
+library(tidyverse)
+library(targets)
+model_name <- "0_baseline_LSTM"
+output_dir <- file.path("../../2a_model/out/models/", model_name)
+config_dir <- file.path("../../2a_model/src/models/", model_name)
+```
+
+# Overview
+
+## Model name {data-width=350}
+
+### Summary stats overall
+
+```{r, echo=FALSE}
+overall_stats <- read_csv(file.path(output_dir, "overall_metrics.csv")) %>%
+  select(partition, variable, nse, rmse) %>%
+  pivot_longer(c(nse, rmse), names_to = "metric")
+
+p <- ggplot(overall_stats, aes(x = variable, y = value, fill=partition)) + 
+  geom_bar(stat="identity", width=.5, position = "dodge") +
+  geom_text(aes(label=round(value, 2)), vjust=1.6, color="white", size=2.5, position = position_dodge(0.5))+
+  facet_wrap(~metric, scales="free_y", nrow = 2)
+p
+
+```
+
+
+### Summary stags by segment 
+
+```{r}
+seg_stats <- read_csv(file.path(output_dir, "reach_metrics.csv")) %>%
+  select(partition, site_id, variable, nse) %>%
+  filter(variable == "do_mean")
+  # pivot_longer(c(nse, rmse), names_to = "metric")
+
+p <- ggplot(seg_stats, aes(x = site_id, y = nse, fill=partition)) + 
+  geom_bar(stat="identity", width=.5, position = "dodge") +
+  geom_text(aes(label=round(nse, 2)), vjust=1.6, color="black", size=2.5, position = position_dodge(0.5))
+p
+```
+
+## Plots {data-width=350}
+
+### Training log
+
+```{r}
+train_log_file <- file.path(output_dir, "train_log.csv")
+train_log <- read_csv(train_log_file) %>% 
+  pivot_longer(c(loss, val_loss), names_to = "loss_type", values_to = "loss")
+p <- ggplot(train_log) +
+  geom_line(aes(x=epoch, y=loss, color=loss_type))
+p
+  
+```
+
+### other information
+
+other information
+
+# Segment plots
+
+## segment plots
+
+### segment plots
+```{r}
+val_predictions <- arrow::read_feather(
+  file.path(output_dir, "val_preds.feather")) %>%
+  mutate(date = lubridate::as_date(date))
+p2a_well_observed_do_data <- tar_read(p2a_well_observed_do_data, store = "../../_targets")
+preds_obs <- val_predictions %>% 
+  left_join(p2a_well_observed_do_data, 
+            by = c("date", "site_id"),
+            suffix = c("_pred", "_obs"))
+
+p <- ggplot(preds_obs) +
+  geom_line(aes(x=date, y=do_mean_pred)) +
+  geom_point(aes(x=date, y=do_mean_obs)) + 
+  facet_wrap(~site_id, scales="free_x", ncol = 3)
+
+p
+
+```
