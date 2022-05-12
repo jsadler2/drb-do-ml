@@ -1,5 +1,6 @@
 # import numpy as np
 import tensorflow as tf
+from tensorflow.math import pow
 
 
 def calc_press_pa(elev):
@@ -45,26 +46,27 @@ def calc_DO_sat(temp_C, elev, salinity=0):
     temp_K = temp_C + 273.15
 
     DO = tf.math.exp(A1 + (A2/temp_K) -
-                     (A3/(temp_K**2)) +
-                     (A4/(temp_K**3)) -
-                     (A5/(temp_K**4)))
+                     (A3/pow(temp_K, 2)) +
+                     (A4/pow(temp_K, 3)) -
+                     (A5/pow(temp_K, 4)))
 
 
     # salinity factor
-    Fs = tf.math.exp(-salinity*(0.017674 - (10.754/temp_K) + (2140.7/(temp_K**2))))
+    Fs = tf.math.exp(-salinity*(0.017674 - (10.754/temp_K) + (2140.7/pow(temp_K, 2))))
 
 
     # pressure factor 
     P_atm = calc_press_atm(elev)
     theta = 0.000975 -\
          temp_C*1.426e-5 +\
-         (temp_C**2)*6.436e-8
+         pow(temp_C, 2)*6.436e-8
 
-    u = tf.math.exp(11.8571 - (3840.70/temp_K) - (216961/(temp_K**2)))
+    u = tf.math.exp(11.8571 - (3840.70/temp_K) - (216961/pow(temp_K, 2)))
 
 
     Fp = ((P_atm - u)*(1-(theta*P_atm))) /\
             ((1-u)*(1-theta))
+
 
     return DO * Fp * Fs
 
@@ -75,4 +77,8 @@ def calc_K2(K600, T):
     sC = 2.142
     sD = -0.0216
     sE = -0.5
-    return K600 * ((sA + sB*T + sC*T**2 + sD*T**3)/600)**sE
+    return K600 * pow((sA + sB*T + sC*pow(T, 2) + sD*pow(T, 3))/600, sE)
+
+
+
+

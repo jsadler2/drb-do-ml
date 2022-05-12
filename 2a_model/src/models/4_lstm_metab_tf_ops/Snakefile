@@ -1,16 +1,16 @@
 from model import LSTMMetab
 from snakemake_utils import get_elev_light_std_means
 
-workdir: "2a_model/src/models/1_lstm_metab"
+workdir: "2a_model/src/models/4_lstm_metab_tf_ops"
 configfile: "config.yml"
 
 out_dir = os.path.join(config['out_dir'], config['exp_name'])
 
 rule all:
     input:
-          expand("{outdir}/exp_{metric_type}_metrics.csv",
-                  outdir=out_dir,
-                  metric_type=['overall', 'reach']),
+          # expand("{outdir}/exp_{metric_type}_metrics.csv",
+          #        outdir=out_dir,
+           #       metric_type=['overall', 'reach']),
           expand("{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/plots/ts_{site_id}_{year}.png",
                  outdir=out_dir,
                  nstates=config['hidden_size'],
