@@ -1,6 +1,6 @@
 # import numpy as np
 import tensorflow as tf
-from tensorflow.math import pow, multiply, divide
+from tensorflow.math import pow, multiply, divide, add, subtract
 
 
 def calc_press_pa(elev):
@@ -26,7 +26,7 @@ def calc_press_pa(elev):
 
 
 def calc_press_atm(elev):
-    return divide(calc_press_pa(elev), 101325)
+    return divide(calc_press_pa(elev), 101325.0)
 
 
 def calc_DO_sat(temp_C, elev, salinity=0):
@@ -43,40 +43,35 @@ def calc_DO_sat(temp_C, elev, salinity=0):
     A4 = 1.243800e10
     A5 = 8.621949e11
 
-    temp_K = temp_C + 273.15
+    temp_K = add(temp_C, 273.15)
 
-    DO = tf.math.exp(A1 + divide(A2, temp_K) -
-                     divide(A3, pow(temp_K, 2)) +
-                     divide(A4, pow(temp_K, 3)) -
-                     divide(A5, pow(temp_K, 4)))
+    DO = tf.math.exp(subtract(add(subtract(add(A1, divide(A2, temp_K)), divide(A3, pow(temp_K, 2.0))), divide(A4, pow(temp_K, 3.0))), divide(A5, pow(temp_K, 4.0))))
 
 
     # salinity factor
-    Fs = tf.math.exp(multiply(tf.cast(-salinity, tf.float32), (0.017674 - divide(10.754, temp_K) + divide(2140.7, pow(temp_K, 2)))))
+    Fs = tf.math.exp(multiply(tf.cast(-salinity, tf.float32), add(subtract(0.017674, divide(10.754, temp_K)), divide(2140.7, pow(temp_K, 2.0)))))
 
 
     # pressure factor 
     P_atm = calc_press_atm(elev)
-    theta = 0.000975 -\
-         multiply(temp_C, 1.426e-5) +\
-         multiply(pow(temp_C, 2), 6.436e-8)
+    theta = add(subtract(0.000975, multiply(temp_C, 1.426e-5)), multiply(pow(temp_C, 2), 6.436e-8))
 
-    u = tf.math.exp(11.8571 - divide(3840.70, temp_K) - divide(216961, pow(temp_K, 2)))
+    u = tf.math.exp(subtract(subtract(11.8571, divide(3840.70, temp_K)), divide(216961.0, pow(temp_K, 2.0))))
 
 
-    Fp = multiply(P_atm - u, divide(1-multiply(theta, P_atm), multiply(1-u, 1-theta)))
+    Fp = multiply(subtract(P_atm, u), divide(subtract(1.0, multiply(theta, P_atm)), multiply(subtract(1.0, u), subtract(1.0, theta))))
 
 
     return multiply(multiply(DO, Fp), Fs)
 
 
 def calc_K2(K600, T):
-    sA = 1568
+    sA = 1568.0
     sB = -86.04
     sC = 2.142
     sD = -0.0216
     sE = -0.5
-    return multiply(K600, pow(divide(sA + multiply(sB, T) + multiply(sC, pow(T, 2)) + multiply(sD, pow(T, 3)), 600), sE))
+    return multiply(K600, pow(divide(add(add(add(sA, multiply(sB, T)), multiply(sC, pow(T, 2.0))), multiply(sD, pow(T, 3.0))), 600.0), sE))
 
 
 

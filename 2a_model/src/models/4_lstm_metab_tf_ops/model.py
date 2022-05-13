@@ -1,6 +1,6 @@
 import tensorflow as tf
 from tensorflow.keras import layers
-from tensorflow.math import multiply, divide
+from tensorflow.math import multiply, divide, add, subtract
 import metab_utils
 
 class LSTMMetab(tf.keras.Model):
@@ -48,8 +48,8 @@ class LSTMMetab(tf.keras.Model):
     def call(self, inputs):
         # get elevations and light ratios and unscale them so they work with
         # the rest of the equations
-        elev = multiply(inputs[:, :, self.elev_idx], self.elev_std) + self.elev_mean
-        light_ratio = multiply(inputs[:, :, self.light_ratio_idx], self.light_ratio_std) + self.light_ratio_mean
+        elev = add(multiply(inputs[:, :, self.elev_idx], self.elev_std), self.elev_mean)
+        light_ratio = add(multiply(inputs[:, :, self.light_ratio_idx], self.light_ratio_std), self.light_ratio_mean)
 
         # the LSTM produces the metabolism estimates and related values
         h = self.rnn_layer(inputs)
@@ -77,9 +77,9 @@ class LSTMMetab(tf.keras.Model):
         light_ratio = tf.cast(light_ratio, tf.float32)
 
         # use the metabolism estimates to calculate DO min, max, mean
-        DO_min = DO_sat + divide(ER, k2) 
-        DO_max = DO_sat + divide(multiply(GPP, light_ratio) + multiply(ER, er_ratio), multiply(k2, er_ratio))
-        DO_mean = DO_min + self.do_range_multiplier(DO_max - DO_min) + tf.squeeze(self.do_mean_wgt(h))
+        DO_min = add(DO_sat, divide(ER, k2))
+        DO_max = add(DO_sat, divide(add(multiply(GPP, light_ratio), multiply(ER, er_ratio)), multiply(k2, er_ratio)))
+        DO_mean = add(add(DO_min, self.do_range_multiplier(subtract(DO_max, DO_min))), tf.squeeze(self.do_mean_wgt(h)))
 
 
         return tf.stack((DO_min, DO_mean, DO_max, GPP, ER, K600, z, T), axis=2)
