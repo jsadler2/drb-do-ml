@@ -1,5 +1,5 @@
 out_dir: "../../../out/models"
-exp_name: "4_lstm_metab_tf_ops_pow"
+exp_name: "4_lstm_metab_tf_ops_mult"
 
 
 #### for flow modeling, seg_width should be removed from x_vars

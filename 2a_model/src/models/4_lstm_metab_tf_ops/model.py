@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras import layers
+from tensorflow.math import multiply, divide
 import metab_utils
-
 
 class LSTMMetab(tf.keras.Model):
     def __init__(
@@ -48,10 +48,8 @@ class LSTMMetab(tf.keras.Model):
     def call(self, inputs):
         # get elevations and light ratios and unscale them so they work with
         # the rest of the equations
-        elev = (inputs[:, :, self.elev_idx] * self.elev_std) + self.elev_mean
-        light_ratio = (inputs[:, :, self.light_ratio_idx] * \
-                       self.light_ratio_std) + \
-                       self.light_ratio_mean
+        elev = multiply(inputs[:, :, self.elev_idx], self.elev_std) + self.elev_mean
+        light_ratio = multiply(inputs[:, :, self.light_ratio_idx], self.light_ratio_std) + self.light_ratio_mean
 
         # the LSTM produces the metabolism estimates and related values
         h = self.rnn_layer(inputs)
@@ -64,18 +62,26 @@ class LSTMMetab(tf.keras.Model):
         T = metab[:, :, 4]
 
         K2 = metab_utils.calc_K2(K600, T)
-        k2 = K2 *z
+        k2 = multiply(K2, z)
 
         DO_sat = metab_utils.calc_DO_sat(T, elev)
 
-        er_ratio = 1/48
+        er_ratio = divide(1, 48)
+
+        # cast all to float32
+        ER = tf.cast(ER, tf.float32)
+        GPP = tf.cast(GPP, tf.float32)
+        k2 = tf.cast(k2, tf.float32)
+        DO_sat = tf.cast(DO_sat, tf.float32)
+        er_ratio = tf.cast(er_ratio, tf.float32)
+        light_ratio = tf.cast(light_ratio, tf.float32)
 
         # use the metabolism estimates to calculate DO min, max, mean
-        DO_min = DO_sat + (ER/k2) 
-        DO_max = DO_sat + ((GPP * light_ratio) + ER * er_ratio)/(k2 * er_ratio)
-        DO_mean = DO_min + \
-                  self.do_range_multiplier(DO_max - DO_min) + \
-                  tf.squeeze(self.do_mean_wgt(h))
+        DO_min = DO_sat + divide(ER, k2) 
+        DO_max = DO_sat + divide(multiply(GPP, light_ratio) + multiply(ER, er_ratio), multiply(k2, er_ratio))
+        DO_mean = DO_min + self.do_range_multiplier(DO_max - DO_min) + tf.squeeze(self.do_mean_wgt(h))
+
+
         return tf.stack((DO_min, DO_mean, DO_max, GPP, ER, K600, z, T), axis=2)
 
 
