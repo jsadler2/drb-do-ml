@@ -1,5 +1,10 @@
 import tensorflow as tf
 import metab_utils
+import sys
+
+code_dir = "2a_model/src/models/river-dl"
+sys.path.append(code_dir)
+
 from river_dl.loss_functions import multitask_rmse
 
 
@@ -20,19 +25,22 @@ def penalize_by_pb_model(meta_lambdas):
     :param meta_lambdas: [iterable of numbers] weights for the three components
     of loss. Weights will be applied to the loss components in the order above
     """
+    @tf.function
     def pb_model_loss(y_true, y_pred):
         
         # Metab Loss
         ## leaving the lower-level lambdas as 1 for now
         metab_lambdas = [1, 1, 1, 1, 1]
         metab_rmse_fxn = multitask_rmse(metab_lambdas)
-        metab_loss = metab_rmse_fxn(y_true[:, :, 3:7], y_pred[:, :, 3:7])
+        metab_loss = metab_rmse_fxn(y_true[:, :, 3:8], y_pred[:, :, 3:8])
+        tf.print("metab preds:",  y_pred[:, :, 3:8].shape)
 
         # DO Loss from observations
         ## leaving the lower-level lambdas as 1 for now
         DO_lambdas_obs = [1, 1, 1]
         DO_rmse_fxn = multitask_rmse(DO_lambdas_obs)
-        DO_loss_obs = DO_rmse_fxn(y_true[:, :, :2], y_pred[:, :, :2])
+        DO_loss_obs = DO_rmse_fxn(y_true[:, :, :3], y_pred[:, :, :3])
+        tf.print("DO preds:",  y_pred[:, :, :3].shape)
 
         # DO Loss from process-based estimates 
         ## get DO estimates from PB equations
@@ -64,8 +72,19 @@ def penalize_by_pb_model(meta_lambdas):
         DO_rmse_fxn_PB = multitask_rmse(DO_lambdas_PB)
         DO_loss_PB = DO_rmse_fxn_PB(DO_min_max_PB,
                                     tf.gather(y_pred, indices=(0, 2), axis=2))
+
+        DO_loss_PB = tf.where(tf.math.is_nan(DO_loss_PB),
+                              tf.zeros_like(DO_loss_PB),
+                              DO_loss_PB)
+
+        if DO_loss_PB > 100:
+            DO_loss_PB = 0.0
+
+        tf.print("pb loss:", DO_loss_PB)
+        tf.print("obs loss:", DO_loss_obs)
+        tf.print("metab loss:", metab_loss)
     
-        combined_loss = meta_lambdas[0] * metab_loss + meta_lambdas[1] * DO_loss_obs + meta_lambdas[2] * DO_loss_PB
+        combined_loss = meta_lambdas[0] * metab_loss + meta_lambdas[1] * DO_loss_obs  + meta_lambdas[2] * DO_loss_PB
 
         return combined_loss
     return pb_model_loss

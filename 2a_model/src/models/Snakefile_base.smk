@@ -77,8 +77,17 @@ rule train:
     run:
         optimizer = tf.optimizers.Adam(learning_rate=config['finetune_learning_rate']) 
         # using .get so that if there is no "loss_function" value in `params`,
-        # the variable will fall back to a multitask_rmse
-        loss_function = params.get('loss_function', lf.multitask_rmse(config['lambdas'])
+        # the variable will fall back to a multitask_rmse. I have to wrap this
+        # in an if statement b/c the second parameter of `get` is evaluated 
+        # whether or not the first is True. This can throws an error b/c if 
+        # there is a custom loss fxn, likely the `lambdas` config variable is
+        # not defined.
+        # See https://stackoverflow.com/questions/9761396/dict-get-default-arg-evaluated-even-upon-success
+        if params.get('loss_function'):
+            loss_function = params.loss_function
+        else:
+            loss_function = lf.multitask_rmse(config['lambdas'])
+
         params.model.compile(optimizer=optimizer, loss=loss_function)
         data = np.load(input[0], allow_pickle=True)
         nsegs = len(np.unique(data["ids_trn"]))
