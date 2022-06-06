@@ -16,7 +16,6 @@ from river_dl.train import train_model
 from river_dl import loss_functions as lf
 
 out_dir = os.path.join(config['out_dir'], config['exp_name'])
-loss_function = lf.multitask_rmse(config['lambdas'])
 
 include: "visualize_models.smk"
 
@@ -77,6 +76,9 @@ rule train:
         "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/train_time.txt",
     run:
         optimizer = tf.optimizers.Adam(learning_rate=config['finetune_learning_rate']) 
+        # using .get so that if there is no "loss_function" value in `params`,
+        # the variable will fall back to a multitask_rmse
+        loss_function = params.get('loss_function', lf.multitask_rmse(config['lambdas'])
         params.model.compile(optimizer=optimizer, loss=loss_function)
         data = np.load(input[0], allow_pickle=True)
         nsegs = len(np.unique(data["ids_trn"]))
