@@ -1,0 +1,45 @@
+# add lstm with extra dense layer  directory to path so we can import the
+# model from the model.py file in that directory. We are using the same model
+# for this experiment (multitask LSTM), just a different loss fxn
+import sys
+sys.path.append("../0_baseline_LSTM")
+
+from model import LSTMModel2Dense
+from loss_function import penalize_by_pb_model
+
+workdir: "2a_model/src/models/0_baseline_LSTM"
+configfile: "../config_base.yml"
+
+out_dir = os.path.join(config['out_dir'], config['exp_name'])
+
+rule all:
+    input:
+          expand("{outdir}/exp_{metric_type}_metrics.csv",
+                  outdir=out_dir,
+                  metric_type=['overall', 'reach']),
+          expand("{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/plots/ts_{site_id}_{year}.png",
+                 outdir=out_dir,
+                 nstates=config['hidden_size'],
+                 epochs=config['epochs'],
+                 rep=list(range(config['num_replicates'])),
+                 site_id=['01480870'],
+                 year=[2012])
+        
+
+module base_workflow:
+    snakefile: "../Snakefile_base.smk"
+    config: config
+
+
+use rule * from base_workflow as base_*
+
+
+use rule train from base_workflow as base_train with:
+    params:
+        model = lambda wildcards: LSTMModel2Dense(int(wildcards.nstates), recurrent_dropout=config['recurrent_dropout'], dropout=config['dropout'], num_tasks=len(config['y_vars'])),
+        loss_function = penalize_by_pb_model(meta_lambdas=config['meta_lambdas'])
+
+use rule make_predictions from base_workflow as base_make_predictions with:
+    params:
+        model = lambda wildcards: LSTMModel2Dense(int(wildcards.nstates), recurrent_dropout=config['recurrent_dropout'], dropout=config['dropout'], num_tasks=len(config['y_vars'])),
+        loss_function = penalize_by_pb_model(meta_lambdas=config['meta_lambdas'])
