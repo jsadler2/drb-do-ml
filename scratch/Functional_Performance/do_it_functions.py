@@ -61,9 +61,8 @@ def calc_it_metrics_sites(inputs_df, source, sink, site, log_transform,
 
     
     #create dictionary to store calculations in
-    max_it = {'do_min': {}, 'do_mean': {}, 'do_max':{}, 'do_range':{}}
-    sink = ['do_min']
-    max_it = {'do_min': {}}
+    max_it = {s: {} for s in sink}
+    
     #create a nested dictionary for each DO variable to store it calcs
     #TE0 = Transfer Entropy at a time lag of 0, MI = mututal information,
     #TEmax is the maximum TE, TEmaxT is the time lag of the maximum TE,
@@ -201,8 +200,6 @@ def site_it_metrics(inputs_df, source, sink, sites, models, replicate,
     #function for calculating the it metrics for each site
     max_it_site = {}
     for site in sites:
-        if site == '014721254' or site == '014721259':
-            continue
         max_it = calc_it_metrics_sites(inputs_df, source, sink, site, log_transform=False,
                                        models=models, replicate=replicate,
                                        base_file_path=base_file_path)
@@ -216,7 +213,8 @@ def get_max_it_df(input_file, models, base_file_path, replicate, sink,
     inputs = xr.open_zarr(input_file,consolidated=False)
     inputs_df = inputs.to_dataframe()
 
-    sites = [inputs_df.index.unique('site_id')[0]]
+    sites = inputs_df.index.unique('site_id')
+    sites = sites.drop(['014721254', '014721259'])
 
     max_it_site = site_it_metrics(inputs_df, source, sink, sites, models,
                                   replicate, base_file_path)
