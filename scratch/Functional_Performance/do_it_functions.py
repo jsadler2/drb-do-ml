@@ -210,6 +210,31 @@ def site_it_metrics(inputs_df, source, sink, sites, models, replicate,
 
 def get_max_it_df(input_file, models, base_file_path, replicate, sink,
                   source='srad'):
+    '''
+    This function returns the functional performance (Transfer Entropy (TE) and 
+    Mutual Information (MI)) for all models specified, all sinks specified, for
+    the specified source, and for _one_ replicate. 
+
+    Parameters
+    ----------
+    inputs_file : str
+        path to input zarr file
+    models : iterable (list or tuple)
+        the models for which you want to do the calcs (e.g., ['0_baseline_LSTM', '2_multitask_dense'])
+    base_file_path: str
+        filepath where the model results are (e.g., "2a_model/out/models/")
+    replicate : int
+        which replicate you want to do the calcs for
+    sink : list
+        sinks ['do_min', 'do_mean', 'do_max']
+    source : str
+        source for calculations (srad, tmmx, tmmn)
+        
+    Returns
+    -------
+    a Pandas DataFrame with columns:
+    `model,rmse,TE{0-8,max,maxt,maxcrit},MI{0-8,max,maxt,maxcrit},metric,site,rep_id`
+    '''
     inputs = xr.open_zarr(input_file,consolidated=False)
     inputs_df = inputs.to_dataframe()
 
