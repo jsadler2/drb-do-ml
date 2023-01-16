@@ -127,7 +127,7 @@ p2a_targets_list <- list(
                       exp_name = "1a_multitask_do_gpp_er"),
     format = "file"
   ),
-  
+
   # Write model config file for 1b_multitask_do_gpp
   tar_target(
     p2a_config_1b_metab_multitask_yml,
@@ -136,6 +136,16 @@ p2a_targets_list <- list(
                       exp_name = "1b_multitask_do_gpp"),
     format = "file"
   ),
+
+  # Write model config file for 1c_multitask_do_gpp_er
+  tar_target(
+    p2a_config_1c_metab_multitask_yml,
+    write_config_file(cfg_options = metab_1b_multitask_config_options,
+                      fileout = "2a_model/src/models/1_metab_multitask/1c_multitask_do_temp.yml",
+                      exp_name = "1c_multitask_do_temp"),
+    format = "file"
+  ),
+  
   
   # Write model config file for 2_multitask_dense
   tar_target(
@@ -143,6 +153,15 @@ p2a_targets_list <- list(
     write_config_file(cfg_options = multitask_dense_config_options,
                       fileout = "2a_model/src/models/2_multitask_dense/config.yml",
                       exp_name = "2_multitask_dense"),
+    format = "file"
+  ),
+
+  # Write model config file for 2_multitask_dense
+  tar_target(
+    p2a_config_2a,
+    write_config_file(cfg_options = config_options_2a,
+                      fileout = "2a_model/src/models/2_multitask_dense/2a_lower_lambda_metab.yml",
+                      exp_name = "2a_lower_lambda_metab"),
     format = "file"
   ),
   
@@ -197,9 +216,15 @@ p2a_targets_list <- list(
         list(model_id = "1a_multitask_do_gpp_er",
              snakefile_dir = "0_baseline_LSTM",
              config_path = stringr::str_remove(p2a_config_1a_metab_multitask_yml, "2a_model/src/models/")),
+        list(model_id = "1c_multitask_do_temp",
+             snakefile_dir = "0_baseline_LSTM",
+             config_path = stringr::str_remove(p2a_config_1c_metab_multitask_yml, "2a_model/src/models/")),
         list(model_id = "2_multitask_dense",
              snakefile_dir = "2_multitask_dense",
-             config_path = stringr::str_remove(p2a_config_multitask_dense_yml, "2a_model/src/models/"))
+             config_path = stringr::str_remove(p2a_config_multitask_dense_yml, "2a_model/src/models/")),
+        list(model_id = "2a_lower_lambda_metab",
+             snakefile_dir = "2_multitask_dense",
+             config_path = stringr::str_remove(p2a_config_2a, "2a_model/src/models/"))
         ),
     iteration = "list"
   ),

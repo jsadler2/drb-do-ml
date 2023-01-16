@@ -159,10 +159,22 @@ metab_1b_multitask_config_options <- list(
   lambdas = c(1, 1, 1, 1, 0, 0, 0, 0)
 )
 
+# Model 1c: Create a list that contains inputs for the 1c_metab_multitask model
+metab_1b_multitask_config_options <- list(
+  y_vars = c("do_min","do_mean","do_max","GPP","ER","K600","depth","temp.water"),
+  lambdas = c(1, 1, 1, 0, 0, 0, 0, 1)
+)
+
 # Model 2: Create a list that contains inputs for the metab_dense model
 multitask_dense_config_options <- list(
   y_vars = c("do_min","do_mean","do_max","GPP","ER","K600","depth","temp.water"),
   lambdas = c(1, 1, 1, 1, 1, 1, 1, 1)
+)
+
+# Model 2a: Create a list that contains inputs for the metab_dense model with modified output weights
+config_options_2a <- list(
+  y_vars = c("do_min","do_mean","do_max","GPP","ER","K600","depth","temp.water"),
+  lambdas = c(1, 1, 1, 0.5, 0.5, 0.5, 0.5, 0.5)
 )
 
 
