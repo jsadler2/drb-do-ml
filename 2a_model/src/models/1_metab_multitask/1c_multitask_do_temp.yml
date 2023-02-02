@@ -1,4 +1,4 @@
-exp_name: "1b_multitask_do_gpp"
+exp_name: "1c_multitask_do_temp"
 y_vars:
   - "do_min"
   - "do_mean"

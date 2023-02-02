@@ -141,6 +141,24 @@ model_config_options <- list(
   lambdas = c(1,1,1)
 )
 
+# Model 0a: Create a list that contains inputs for the "baseline" deep learning model.
+model_config_options_0a <- list(
+  y_vars = c("do_min","do_mean","do_max"),
+  lambdas = c(1,0,0)
+)
+
+# Model 0b Create a list that contains inputs for the "baseline" deep learning model.
+model_config_options_0b <- list(
+  y_vars = c("do_min","do_mean","do_max"),
+  lambdas = c(0,1,0)
+)
+
+# Model 0c Create a list that contains inputs for the "baseline" deep learning model.
+model_config_options_0c <- list(
+  y_vars = c("do_min","do_mean","do_max"),
+  lambdas = c(0,0,1)
+)
+
 # Model 1: Create a list that contains inputs for the metab_multitask model
 metab_multitask_config_options <- list(
   y_vars = c("do_min","do_mean","do_max","GPP","ER","K600","depth","temp.water"),

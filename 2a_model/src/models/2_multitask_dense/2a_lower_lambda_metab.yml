@@ -1,4 +1,4 @@
-exp_name: "1b_multitask_do_gpp"
+exp_name: "2a_lower_lambda_metab"
 y_vars:
   - "do_min"
   - "do_mean"
@@ -16,5 +16,5 @@ lambdas:
   - 0
   - 0
   - 0
-  - 1
+  - 0
  

@@ -1,0 +1,21 @@
+
+exp_name: 2a_half_lambdas_multitask
+y_vars:
+  - do_min
+  - do_mean
+  - do_max
+  - GPP
+  - ER
+  - K600
+  - depth
+  - temp.water
+lambdas:
+  - 1
+  - 1
+  - 1
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+  - 0.5
+ 

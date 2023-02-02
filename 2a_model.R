@@ -110,6 +110,33 @@ p2a_targets_list <- list(
     format = "file"
   ),
   
+  # Write model config file for 0a_baseline_LSTM
+  tar_target(
+    p2a_config_0a_yml,
+    write_config_file(cfg_options = model_config_options_0a,
+                      fileout = "2a_model/src/models/0_baseline_LSTM/config_0a.yml",
+                      exp_name = "0a_baseline_LSTM"),
+    format = "file"
+  ),
+  
+  # Write model config file for 0_baseline_LSTM
+  tar_target(
+    p2a_config_0b_yml,
+    write_config_file(cfg_options = model_config_options_0b,
+                      fileout = "2a_model/src/models/0_baseline_LSTM/config_0b.yml",
+                      exp_name = "0b_baseline_LSTM"),
+    format = "file"
+  ),
+  
+  # Write model config file for 0_baseline_LSTM
+  tar_target(
+    p2a_config_0c_yml,
+    write_config_file(cfg_options = model_config_options_0c,
+                      fileout = "2a_model/src/models/0_baseline_LSTM/config_0c.yml",
+                      exp_name = "0c_baseline_LSTM"),
+    format = "file"
+  ),
+  
   # Write model config file for 1_metab_multitask
   tar_target(
     p2a_config_metab_multitask_yml,
@@ -208,6 +235,15 @@ p2a_targets_list <- list(
         list(model_id = "0_baseline_LSTM",
              snakefile_dir = "0_baseline_LSTM",
              config_path = stringr::str_remove(p2a_config_baseline_LSTM_yml, "2a_model/src/models/")),
+        list(model_id = "0a_baseline_LSTM",
+             snakefile_dir = "0_baseline_LSTM",
+             config_path = stringr::str_remove(p2a_config_0a_yml, "2a_model/src/models/")),
+        list(model_id = "0b_baseline_LSTM",
+             snakefile_dir = "0_baseline_LSTM",
+             config_path = stringr::str_remove(p2a_config_0b_yml, "2a_model/src/models/")),
+        list(model_id = "0c_baseline_LSTM",
+             snakefile_dir = "0_baseline_LSTM",
+             config_path = stringr::str_remove(p2a_config_0c_yml, "2a_model/src/models/")),
          #the 1_ models use the same model and therefore the same Snakefile
          #as the 0_baseline_LSTM run
         list(model_id = "1_metab_multitask",

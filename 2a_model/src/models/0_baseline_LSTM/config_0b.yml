@@ -1,10 +1,10 @@
-exp_name: "0_baseline_LSTM"
+exp_name: "0b_baseline_LSTM"
 y_vars:
   - "do_min"
   - "do_mean"
   - "do_max"
 lambdas:
+  - 0
   - 1
-  - 1
-  - 1
+  - 0
  
