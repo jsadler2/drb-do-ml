@@ -101,9 +101,9 @@ rule make_predictions:
     input:
         "{outdir}/prepped.npz",
         "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/train_weights/",
-        "../../../out/well_obs_io_ADJ_TOT_BASIN_SLOPE.zarr",
+        "../../../out/well_obs_io_ADJ_IMP_and_SLP.zarr",
     output:
-        "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/preds_adj_SLP.feather",
+        "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/preds_adj_SLP_IMP.feather",
     run:
         weight_dir = input[1] + "/"
         params.model.load_weights(weight_dir)
@@ -154,9 +154,9 @@ def filter_predictions(all_preds_file, partition, out_file):
 
 rule make_filtered_predictions:
     input:
-        "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/preds_adj_SLP.feather"
+        "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/preds_adj_SLP_IMP.feather"
     output:
-        "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/{partition}_preds_adj_SLP.feather"
+        "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/{partition}_preds_adj_SLP_IMP.feather"
     run:
         filter_predictions(input[0], wildcards.partition, output[0])
 
@@ -175,11 +175,11 @@ def get_grp_arg(wildcards):
 rule combine_metrics:
      input:
           "../../../out/well_obs_io.zarr",
-          "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/trn_preds_adj_SLP.feather",
-          "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/val_preds_adj_SLP.feather",
-          "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/val_times_preds_adj_SLP.feather"
+          "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/trn_preds_adj_SLP_IMP.feather",
+          "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/val_preds_adj_SLP_IMP.feather",
+          "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/val_times_preds_adj_SLP_IMP.feather"
      output:
-          "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/{metric_type}_metrics_adj_SLP.csv"
+          "{outdir}/nstates_{nstates}/nep_{epochs}/rep_{rep}/{metric_type}_metrics_adj_SLP_IMP.csv"
      params:
          grp_arg = get_grp_arg
      run:
