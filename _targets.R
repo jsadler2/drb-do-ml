@@ -84,7 +84,7 @@ dummy_date <- "2023-03-02"
 #2) Configure model inputs/variables 
 
 # Define test and validation sites
-val_sites <- c("01475530", "01475548")
+val_sites <- c("01475548")
 
 # Define train/val/test dates
 train_start_date <- '1980-10-01'

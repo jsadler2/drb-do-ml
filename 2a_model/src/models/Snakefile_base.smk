@@ -31,6 +31,14 @@ rule as_run_config:
     run:
         asRunConfig(config,output[0])
 
+def mk_list_if_str(value):
+    if isinstance(value, str):
+        return list(value)
+    elif isinstance(value, list):
+        return value
+    else:
+        raise Exception("was expecting a string or a list. got ", type(value))
+
 
 rule prep_io_data:
     input:
@@ -38,6 +46,7 @@ rule prep_io_data:
     output:
         "{outdir}/prepped.npz"
     run:
+        val_sites = mk_list_if_str(config['validation_sites'])
         prep_all_data(x_data_file=input[0],
                       y_data_file=input[0],
                       x_vars=config['x_vars'],
@@ -48,7 +57,7 @@ rule prep_io_data:
                       train_end_date=config['train_end_date'],
                       val_start_date=config['val_start_date'],
                       val_end_date=config['val_end_date'],
-                      val_sites=config['validation_sites'],
+                      val_sites=val_sites,
                       out_file=output[0],
                       normalize_y=False,
                       trn_offset = config['trn_offset'],
@@ -61,7 +70,7 @@ rule prep_io_data:
                                      data['times_trn'],
                                      data['ids_trn'],
                                      col_names=data['y_obs_vars'])
-        df_trn_val_sites = df_trn[df_trn.seg_id_nat.isin(config['validation_sites'])]
+        df_trn_val_sites = df_trn[df_trn.seg_id_nat.isin(val_sites)]
 
         assert df_trn_val_sites['do_mean'].notna().sum() == 0
 
@@ -120,11 +129,12 @@ rule make_predictions:
 def filter_predictions(all_preds_file, partition, out_file):
         df_preds = pd.read_feather(all_preds_file)
         all_sites = df_preds.site_id.unique()
-        trn_sites = all_sites[~np.isin(all_sites, config["validation_sites"])]
+        val_sites = mk_list_if_str(config["validation_sites"])
+        trn_sites = all_sites[~np.isin(all_sites, val_sites)]
 
         df_preds_trn_sites = df_preds[df_preds.site_id.isin(trn_sites)] 
 
-        df_preds_val_sites = df_preds[df_preds.site_id.isin(config['validation_sites'])] 
+        df_preds_val_sites = df_preds[df_preds.site_id.isin(val_sites)] 
 
 
         if partition == "trn":
