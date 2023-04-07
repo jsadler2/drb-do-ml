@@ -101,6 +101,7 @@ x_vars_global <- c("tmmn","tmmx","pr","srad","SLOPE","TOTDASQKM","CAT_BASIN_SLOP
                    "CAT_RFACT","CAT_WTDEP","TOT_WTDEP","CAT_NPDES_MAJ","CAT_NDAMS2010",
                    "CAT_NORM_STORAGE2010")
 
+y_vars_global = c("do_min","do_mean","do_max","GPP","ER","K600","depth","temp.water")
 # Define model parameters and combine within a list that gets used to
 # write a base model config file for the snakemake modeling workflow.
 base_config_options <- list(
@@ -122,7 +123,8 @@ base_config_options <- list(
   train_end_date = train_end_date, 
   val_start_date = val_start_date, 
   val_end_date = val_end_date,
-  x_vars = x_vars_global
+  x_vars = x_vars_global,
+  y_vars = y_vars_global
   )
 
 # Configure individual models. If different x_vars are desired, add
@@ -130,33 +132,43 @@ base_config_options <- list(
 # lists below, which will override `x_vars_global` in `base_config_options`.
 
 # Model 0: Create a list that contains inputs for the "baseline" deep learning model.
-model_config_options <- list(
-  y_vars = c("do_min","do_mean","do_max"),
-  lambdas = c(1,1,1)
+config_options_0 <- list(
+  lambdas = c(1, 1, 1, 0, 0, 0, 0, 0)
 )
 
-# Model 1: Create a list that contains inputs for the metab_multitask model
-metab_multitask_config_options <- list(
-  y_vars = c("do_min","do_mean","do_max","GPP","ER","K600","depth","temp.water"),
+# Model 1 config options
+config_options_1  <- list(
   lambdas = c(1, 1, 1, 1, 1, 1, 1, 1)
 )
 
-# Model 1a: Create a list that contains inputs for the 1a_metab_multitask model
-metab_1a_multitask_config_options <- list(
-  y_vars = c("do_min","do_mean","do_max","GPP","ER","K600","depth","temp.water"),
+# Model a config options
+config_options_a <- list(
   lambdas = c(1, 1, 1, 1, 1, 0, 0, 0)
 )
 
-# Model 1b: Create a list that contains inputs for the 1b_metab_multitask model
-metab_1b_multitask_config_options <- list(
-  y_vars = c("do_min","do_mean","do_max","GPP","ER","K600","depth","temp.water"),
+# Model b config options
+config_options_b<- list(
   lambdas = c(1, 1, 1, 1, 0, 0, 0, 0)
 )
 
-# Model 2: Create a list that contains inputs for the metab_dense model
-multitask_dense_config_options <- list(
-  y_vars = c("do_min","do_mean","do_max","GPP","ER","K600","depth","temp.water"),
-  lambdas = c(1, 1, 1, 1, 1, 1, 1, 1)
+# Model c config options
+config_options_c<- list(
+  lambdas = c(1, 1, 1, 10, 10, 10, 10, 10)
+)
+
+# Model d config options
+config_options_d<- list(
+  lambdas = c(1, 1, 1, 10, 10, 1, 1, 1)
+)
+
+# Model e config options
+config_options_e<- list(
+  lambdas = c(1, 1, 1, 100, 100, 100, 100, 100)
+)
+
+# Model f config options
+config_options_f<- list(
+  lambdas = c(1, 1, 1, 100, 100, 1, 1, 1)
 )
 
 

@@ -1,6 +1,7 @@
 source("2a_model/src/model_ready_data_utils.R")
 source("2a_model/src/write_model_config_files.R")
 
+
 p2a_targets_list <- list(
 
   ## 1) COMBINE AND FORMAT MODEL-READY INPUTS AND OUTPUTS ##
@@ -91,62 +92,7 @@ p2a_targets_list <- list(
   ),
   
   
-  ## 3) WRITE MODEL CONFIGURATION FILES ##
-  # Write base config file using inputs and parameters defined in _targets.R
-  tar_target(
-    p2a_config_base_yml,
-    write_config_file(cfg_options = base_config_options,
-                      fileout = "2a_model/src/models/config_base.yml"),
-    format = "file"
-  ),
-  
-  # Write model config file for 0_baseline_LSTM
-  tar_target(
-    p2a_config_baseline_LSTM_yml,
-    write_config_file(cfg_options = model_config_options,
-                      fileout = "2a_model/src/models/0_baseline_LSTM/config.yml",
-                      exp_name = "0_baseline_LSTM"),
-    format = "file"
-  ),
-  
-  # Write model config file for 1_metab_multitask
-  tar_target(
-    p2a_config_metab_multitask_yml,
-    write_config_file(cfg_options = metab_multitask_config_options,
-                      fileout = "2a_model/src/models/1_metab_multitask/config.yml",
-                      exp_name = "1_metab_multitask"),
-    format = "file"
-  ),
-  
-  # Write model config file for 1a_multitask_do_gpp_er
-  tar_target(
-    p2a_config_1a_metab_multitask_yml,
-    write_config_file(cfg_options = metab_1a_multitask_config_options,
-                      fileout = "2a_model/src/models/1_metab_multitask/1a_multitask_do_gpp_er.yml",
-                      exp_name = "1a_multitask_do_gpp_er"),
-    format = "file"
-  ),
-  
-  # Write model config file for 1b_multitask_do_gpp
-  tar_target(
-    p2a_config_1b_metab_multitask_yml,
-    write_config_file(cfg_options = metab_1b_multitask_config_options,
-                      fileout = "2a_model/src/models/1_metab_multitask/1b_multitask_do_gpp.yml",
-                      exp_name = "1b_multitask_do_gpp"),
-    format = "file"
-  ),
-  
-  # Write model config file for 2_multitask_dense
-  tar_target(
-    p2a_config_multitask_dense_yml,
-    write_config_file(cfg_options = multitask_dense_config_options,
-                      fileout = "2a_model/src/models/2_multitask_dense/config.yml",
-                      exp_name = "2_multitask_dense"),
-    format = "file"
-  ),
-  
-  
-  ## 4) WRITE OUT PARTITION INPUT AND OUTPUT DATA ##
+  ## 3) WRITE OUT PARTITION INPUT AND OUTPUT DATA ##
   # Subset trn/val input and output data to well-observed sites and format
   # for export. [Jeff]: note - I have to subset inputs to only include the
   # train/val sites before passing to subset_and_write_zarr or else I get a
@@ -178,7 +124,7 @@ p2a_targets_list <- list(
   ),
   
   
-  ## 5) GATHER MODEL IDS AND KICK OFF SNAKEMAKE WORKFLOW TO MAKE MODEL PREDICTIONS ##
+  ## 4) GATHER MODEL IDS  ##
   # gather model ids - add to this list when you want to reproduce
   # outputs from a new model 
   tar_target(
@@ -187,22 +133,82 @@ p2a_targets_list <- list(
       list(
         list(model_id = "0_baseline_LSTM",
              snakefile_dir = "0_baseline_LSTM",
-             config_path = stringr::str_remove(p2a_config_baseline_LSTM_yml, "2a_model/src/models/")),
+             config_options = config_options_0,
+             config_path = "0_baseline_LSTM/config.yml"),
          #the 1_ models use the same model and therefore the same Snakefile
          #as the 0_baseline_LSTM run
         list(model_id = "1_metab_multitask",
              snakefile_dir = "0_baseline_LSTM",
-             config_path = stringr::str_remove(p2a_config_metab_multitask_yml, "2a_model/src/models/")),
+             config_options = config_options_1,
+             config_path = "1_baseline_LSTM/config.yml"),
         list(model_id = "1a_multitask_do_gpp_er",
              snakefile_dir = "0_baseline_LSTM",
-             config_path = stringr::str_remove(p2a_config_1a_metab_multitask_yml, "2a_model/src/models/")),
+             config_options = config_options_a,
+             config_path = "1_baseline_LSTM/1a_multitask_do_gpp_er.yml"),
+        list(model_id = "1b",
+             snakefile_dir = "0_baseline_LSTM",
+             config_options = config_options_b,
+             config_path = "1_baseline_LSTM/1b_multitask_do_gpp.yml"),
+        list(model_id = "1c",
+             snakefile_dir = "0_baseline_LSTM",
+             config_options = config_options_c,
+             config_path = "1_baseline_LSTM/config_1c.yml"),
+        list(model_id = "1d",
+             snakefile_dir = "0_baseline_LSTM",
+             config_options = config_options_d,
+             config_path = "1_baseline_LSTM/config_1d.yml"),
+        list(model_id = "1e",
+             snakefile_dir = "0_baseline_LSTM",
+             config_options = config_options_e,
+             config_path = "1_baseline_LSTM/config_1e.yml"),
+        list(model_id = "1f",
+             snakefile_dir = "0_baseline_LSTM",
+             config_options = config_options_f,
+             config_path = "1_baseline_LSTM/config_1f.yml"),
         list(model_id = "2_multitask_dense",
              snakefile_dir = "2_multitask_dense",
-             config_path = stringr::str_remove(p2a_config_multitask_dense_yml, "2a_model/src/models/"))
+             config_options = config_options_1,
+             config_path = "2_multitask_dense/config.yml"),
+        list(model_id = "2c",
+             snakefile_dir = "2_multitask_dense",
+             config_options = config_options_c,
+             config_path = "2_multitask_dense/config_2c.yml"),
+        list(model_id = "2d",
+             snakefile_dir = "2_multitask_dense",
+             config_options = config_options_d,
+             config_path = "2_multitask_dense/config_2d.yml"),
+        list(model_id = "2e",
+             snakefile_dir = "2_multitask_dense",
+             config_options = config_options_e,
+             config_path = "2_multitask_dense/config_2e.yml"),
+        list(model_id = "2f",
+             snakefile_dir = "2_multitask_dense",
+             config_options = config_options_f,
+             config_path = "2_multitask_dense/config_2f.yml"),
         ),
     iteration = "list"
   ),
-
+  
+  ## 5) WRITE MODEL CONFIGURATION FILES ##
+  # Write base config file using inputs and parameters defined in _targets.R
+  tar_target(
+    p2a_config_base_yml,
+    write_config_file(cfg_options = base_config_options,
+                      fileout = "2a_model/src/models/config_base.yml"),
+    format = "file"
+  ),
+  
+  # Write model config file for individual models
+  tar_target(
+    p2a_model_configs,
+    write_config_file(cfg_options = p2a_model_ids$config_options,
+                      fileout = file.path("2a_model/src/models", p2a_model_ids$config_path),
+                      exp_name = p2a_model_ids$model_id),
+    format = "file",
+    pattern = map(p2a_model_ids)
+  ),
+  
+  ## 6) KICK OFF SNAKEMAKE WORKFLOW TO MAKE MODEL PREDICTIONS ##
   # produce the final metrics files (and all intermediate files including predictions)
   # of each "model_id" with snakemake
   tar_target(
@@ -212,6 +218,7 @@ p2a_targets_list <- list(
     # target on p2a_well_obs_data.
     p2a_well_obs_data
     p2a_well_obs_data_zarr
+    p2a_model
 
     base_dir <- "2a_model/src/models"
     snakefile_path <- file.path(base_dir, p2a_model_ids$snakefile_dir, "Snakefile")
