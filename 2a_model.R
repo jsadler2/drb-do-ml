@@ -140,31 +140,31 @@ p2a_targets_list <- list(
         list(model_id = "1_metab_multitask",
              snakefile_dir = "0_baseline_LSTM",
              config_options = config_options_1,
-             config_path = "1_baseline_LSTM/config.yml"),
+             config_path = "1_metab_multitask/config.yml"),
         list(model_id = "1a_multitask_do_gpp_er",
              snakefile_dir = "0_baseline_LSTM",
              config_options = config_options_a,
-             config_path = "1_baseline_LSTM/1a_multitask_do_gpp_er.yml"),
+             config_path = "1_metab_multitask/1a_multitask_do_gpp_er.yml"),
         list(model_id = "1b",
              snakefile_dir = "0_baseline_LSTM",
              config_options = config_options_b,
-             config_path = "1_baseline_LSTM/1b_multitask_do_gpp.yml"),
+             config_path = "1_metab_multitask/1b_multitask_do_gpp.yml"),
         list(model_id = "1c",
              snakefile_dir = "0_baseline_LSTM",
              config_options = config_options_c,
-             config_path = "1_baseline_LSTM/config_1c.yml"),
+             config_path = "1_metab_multitask/config_1c.yml"),
         list(model_id = "1d",
              snakefile_dir = "0_baseline_LSTM",
              config_options = config_options_d,
-             config_path = "1_baseline_LSTM/config_1d.yml"),
+             config_path = "1_metab_multitask/config_1d.yml"),
         list(model_id = "1e",
              snakefile_dir = "0_baseline_LSTM",
              config_options = config_options_e,
-             config_path = "1_baseline_LSTM/config_1e.yml"),
+             config_path = "1_metab_multitask/config_1e.yml"),
         list(model_id = "1f",
              snakefile_dir = "0_baseline_LSTM",
              config_options = config_options_f,
-             config_path = "1_baseline_LSTM/config_1f.yml"),
+             config_path = "1_metab_multitask/config_1f.yml"),
         list(model_id = "2_multitask_dense",
              snakefile_dir = "2_multitask_dense",
              config_options = config_options_1,
@@ -184,7 +184,7 @@ p2a_targets_list <- list(
         list(model_id = "2f",
              snakefile_dir = "2_multitask_dense",
              config_options = config_options_f,
-             config_path = "2_multitask_dense/config_2f.yml"),
+             config_path = "2_multitask_dense/config_2f.yml")
         ),
     iteration = "list"
   ),
@@ -218,7 +218,7 @@ p2a_targets_list <- list(
     # target on p2a_well_obs_data.
     p2a_well_obs_data
     p2a_well_obs_data_zarr
-    p2a_model
+    p2a_model_configs
 
     base_dir <- "2a_model/src/models"
     snakefile_path <- file.path(base_dir, p2a_model_ids$snakefile_dir, "Snakefile")
@@ -289,7 +289,9 @@ p2a_targets_list <- list(
                                      "2a_model/out/models/2_multitask_dense/observed_func_perf.csv")
       out_file_name = "2a_model/out/models/combined_FP_metrics.csv"
       lapply(overall_metric_files, function(x){
-        dat <- readr::read_csv(x, show_col_types = FALSE)}) %>%
+        dat <- readr::read_csv(x,
+                               show_col_types = FALSE,
+                               col_types = cols(model = col_character()))}) %>%
         bind_rows() %>%
         write_csv(out_file_name)
       out_file_name
