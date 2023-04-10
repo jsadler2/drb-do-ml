@@ -48,6 +48,8 @@ rule prep_io_data:
                       train_end_date=config['train_end_date'],
                       val_start_date=config['val_start_date'],
                       val_end_date=config['val_end_date'],
+                      test_start_date=config['test_start_date'],
+                      test_end_date=config['test_end_date'],
                       val_sites=config['validation_sites'],
                       out_file=output[0],
                       normalize_y=False,
@@ -133,7 +135,7 @@ def filter_predictions(all_preds_file, partition, out_file):
         elif partition == "val":
             # get all of the data in the validation sites and in the validation period
             # this assumes that the test period follows the validation period which follows the train period
-            df_preds_filt_val = df_preds_val_sites
+            df_preds_filt_val = df_preds_val_sites[df_preds_val_sites.date < config['test_start_date']]
             df_preds_filt_trn = df_preds_trn_sites[(df_preds_trn_sites.date < config['val_end_date']) &
                                                    (df_preds_trn_sites.date >= config['val_start_date'])]
             df_preds_filt = pd.concat([df_preds_filt_val , df_preds_filt_trn], axis=0)

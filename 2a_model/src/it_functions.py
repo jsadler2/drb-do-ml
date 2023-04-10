@@ -322,12 +322,12 @@ def calc_it_metrics(M, Mswap, n_lags, nbins, alpha, ncores, calc_swap = True):
     '''
     
     MI = []
-    MIcrit = []
+    # MIcrit = []
     corr = []
     TE = []
-    TEcrit = []
+    # TEcrit = []
     TEswap = []
-    TEcritswap = []
+    # TEcritswap = []
     for i in range(0,n_lags):
         #lag data
         M_lagged = lag_data(M,shift = i)
@@ -335,26 +335,26 @@ def calc_it_metrics(M, Mswap, n_lags, nbins, alpha, ncores, calc_swap = True):
         M_short =  M_lagged[~np.isnan(M_lagged).any(axis=1)]
         MItemp = calcMI(M_short[:,(0,1)], nbins)
         MI.append(MItemp)
-        MIcrittemp = calcMI_crit(M_short[:,(0,1)], nbins, ncores = ncores, alpha = alpha)
-        MIcrit.append(MIcrittemp)
+        # MIcrittemp = calcMI_crit(M_short[:,(0,1)], nbins, ncores = ncores, alpha = alpha)
+        # MIcrit.append(MIcrittemp)
         
         corrtemp = pearsonr(M_short[:,0], M_short[:,1])[0]
         corr.append(corrtemp)
         
         TEtemp = calcTE(M, shift = i, nbins = nbins)
         TE.append(TEtemp)
-        TEcrittemp = calcTE_crit(M, shift = i, nbins = nbins, ncores = ncores, alpha = alpha)
-        TEcrit.append(TEcrittemp)
+        # TEcrittemp = calcTE_crit(M, shift = i, nbins = nbins, ncores = ncores, alpha = alpha)
+        # TEcrit.append(TEcrittemp)
         
         if calc_swap:
             TEtempswap = calcTE(Mswap, shift = i, nbins = nbins)
             TEswap.append(TEtempswap)
-            TEcrittempswap = calcTE_crit(Mswap, shift = i, nbins = nbins, ncores = ncores, alpha = alpha)
-            TEcritswap.append(TEcrittempswap)
+            # TEcrittempswap = calcTE_crit(Mswap, shift = i, nbins = nbins, ncores = ncores, alpha = alpha)
+            # TEcritswap.append(TEcrittempswap)
         
-    it_metrics = {'MI':MI, 'MIcrit':MIcrit,
-                  'TE':TE, 'TEcrit':TEcrit,
-                  'TEswap':TEswap, 'TEcritswap':TEcritswap,
+    it_metrics = {'MI':MI, #'MIcrit':MIcrit,
+                  'TE':TE, #'TEcrit':TEcrit,
+                  'TEswap':TEswap,# 'TEcritswap':TEcritswap,
                   'corr':corr}
     
     return it_metrics

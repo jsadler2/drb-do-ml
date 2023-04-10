@@ -1,13 +1,4 @@
-exp_name: "1b_multitask_do_gpp"
-y_vars:
-  - "do_min"
-  - "do_mean"
-  - "do_max"
-  - "GPP"
-  - "ER"
-  - "K600"
-  - "depth"
-  - "temp.water"
+exp_name: "1b"
 lambdas:
   - 1
   - 1

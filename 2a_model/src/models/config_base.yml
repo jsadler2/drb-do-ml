@@ -15,7 +15,9 @@ validation_sites:
 train_start_date: '1980-10-01'
 train_end_date: '2015-10-01'
 val_start_date: '2015-10-01'
-val_end_date: '2021-10-01'
+val_end_date: '2017-10-01'
+test_start_date: '2017-10-01'
+test_end_date: '2021-10-01'
 x_vars:
   - "tmmn"
   - "tmmx"
@@ -47,4 +49,13 @@ x_vars:
   - "CAT_NPDES_MAJ"
   - "CAT_NDAMS2010"
   - "CAT_NORM_STORAGE2010"
+y_vars:
+  - "do_min"
+  - "do_mean"
+  - "do_max"
+  - "GPP"
+  - "ER"
+  - "K600"
+  - "depth"
+  - "temp.water"
  

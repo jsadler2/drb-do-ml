@@ -130,7 +130,7 @@ def calc_it_metrics_site(inputs_zarr,
     M_xy_bound = np.delete(M_x_bound, np.where((M_x_bound[:,1] < y_bounds[0]*1.1) | (M_x_bound[:,1] > y_bounds[1]*1.1)), axis = 0)
 
     #calc it metrics and store in the dictionary it_dict
-    it_dict = it_functions.calc_it_metrics(M_xy_bound, Mswap, n_lags, nbins, calc_swap = False, alpha = 0.05, ncores = 7)
+    it_dict = it_functions.calc_it_metrics(M_xy_bound, Mswap, n_lags, nbins, calc_swap = False, alpha = 0.05, ncores = 1)
     
     
     print('Storing it metrics '+model+' '+site)
@@ -140,18 +140,18 @@ def calc_it_metrics_site(inputs_zarr,
     TEmax = max(it_dict['TE'])
     TEmaxt = int(np.where(it_dict['TE'] == TEmax)[0])
 
-    if TEmax > it_dict['TEcrit'][TEmaxt]:
-        TEmaxcrit = True
-    else:
-        TEmaxcrit = False
+    # if TEmax > it_dict['TEcrit'][TEmaxt]:
+        # TEmaxcrit = True
+    # else:
+        # TEmaxcrit = False
     
     MImax = max(it_dict['MI'])
     MImaxt = int(np.where(it_dict['MI'] == MImax)[0])
     
-    if MImax > it_dict['MIcrit'][MImaxt]:
-        MImaxcrit = True
-    else:
-        MImaxcrit = False
+    # if MImax > it_dict['MIcrit'][MImaxt]:
+        # MImaxcrit = True
+    # else:
+        # MImaxcrit = False
     #do min
     max_it['model'] = model
     mse = np.square(np.subtract(obs_pred[sink+'_pred'],obs_pred[sink])).mean()
@@ -160,14 +160,15 @@ def calc_it_metrics_site(inputs_zarr,
     
     max_it['TEmax'] = TEmax
     max_it['TEmaxt'] = TEmaxt
-    max_it['TEmaxcrit'] = TEmaxcrit
+    # max_it['TEmaxcrit'] = TEmaxcrit
     
     max_it['MImax'] = MImax
-    for variable in ['TE', 'TEcrit', 'MI', 'MIcrit', 'corr']:
+    # for variable in ['TE', 'TEcrit', 'MI', 'MIcrit', 'corr']:
+    for variable in ['TE', 'MI', 'corr']:
         for i in range(9):
             max_it[f'{variable}{i}'] = it_dict[variable][i]
     max_it['MImaxt'] = MImaxt
-    max_it['MImaxcrit'] = MImaxcrit
+    # max_it['MImaxcrit'] = MImaxcrit
     max_it['replicate'] = replicate
     max_it['sink'] = sink
     max_it['source'] = source

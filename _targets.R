@@ -90,7 +90,9 @@ val_sites <- c("01475530", "01475548")
 train_start_date <- '1980-10-01'
 train_end_date <- '2015-10-01'
 val_start_date <- '2015-10-01'
-val_end_date <- '2021-10-01'
+val_end_date <- '2017-10-01'
+test_start_date <- '2017-10-01'
+test_end_date <- '2021-10-01'
 
 # Define global model parameters for the "baseline" deep learning model
 x_vars_global <- c("tmmn","tmmx","pr","srad","SLOPE","TOTDASQKM","CAT_BASIN_SLOPE",
@@ -123,6 +125,8 @@ base_config_options <- list(
   train_end_date = train_end_date, 
   val_start_date = val_start_date, 
   val_end_date = val_end_date,
+  test_start_date = test_start_date, 
+  test_end_date = test_end_date,
   x_vars = x_vars_global,
   y_vars = y_vars_global
   )
