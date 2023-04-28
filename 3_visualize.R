@@ -73,12 +73,12 @@ p3_targets_list <- list(
   ),
   
   # Save png map of site locations
-  tar_target(
-    p3_site_map_png,
-    map_sites(flowlines = p1_nhd_reaches_sf,
-              matched_sites = p2a_site_splits,
-              out_file = "3_visualize/out/do_site_map.png")
-  ),
+  #tar_target(
+    #p3_site_map_png,
+    #map_sites(flowlines = p1_nhd_reaches_sf,
+              #matched_sites = p2a_site_splits,
+              #out_file = "3_visualize/out/do_site_map.png")
+  #),
   
   # Save json map of site locations
   tar_target(
