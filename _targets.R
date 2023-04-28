@@ -84,10 +84,10 @@ dummy_date <- "2023-03-02"
 #2) Configure model inputs/variables 
 
 # Define test and validation sites
-val_sites <- c("01475530", "01475548")
+val_sites <- c("01475530", "01473500", "01475548")
 
 # Define train/val/test dates
-train_start_date <- '1980-10-01'
+train_start_date <- '2007-10-01'
 train_end_date <- '2015-10-01'
 val_start_date <- '2015-10-01'
 val_end_date <- '2017-10-01'
@@ -110,7 +110,7 @@ base_config_options <- list(
   out_dir = "../../../out/models",
   # random seed for training; If FALSE, no seed. Otherwise, specify the seed:
   seed = FALSE,
-  num_replicates = 10,
+  num_replicates = 4,
   trn_offset = 1,
   tst_val_offset = 1,
   epochs = 100,
